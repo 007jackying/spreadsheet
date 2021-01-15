@@ -1,0 +1,22 @@
+<section>
+
+    <div class="register-wrapper">
+        <div class="register-block">
+            <h3 class="register-title">Create an account</h3>
+            <p>Quickly &amp; easily create an account using the form below.</p>
+            <form method="POST">
+                <input type="email" placeholder="Enter your email" name="email" />
+                <input type="password" placeholder="Enter your password" name="password"/>
+                <input type="password" placeholder="Confirm password" name="confimrPassword" />
+                <input type="text" placeholder="Enter your name" name="name" />
+                <select name="admin" value="{{sess.admin}}" class="select">
+                    <option value="0"> user</option>
+                    <option value="1"> admin</option>
+                </select>
+                <input type="submit" name="sub" value="Create my account" />
+                <a class="account" href="/login">Already have an account?</a>
+            </form>
+        </div>
+    </div>
+
+</section>

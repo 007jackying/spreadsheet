@@ -1,0 +1,26 @@
+<div class="register-wrapper">
+<div class="register-block">
+<h1> User List</h1>
+<hr>
+<table class="adminPage" border="3px solid red">
+<tr>
+    <th>Email</th>
+    <th>Full name</th>
+    <th>Status</th>
+    <th>Position</th>
+    <th colspan="2">Operations</th>
+</tr>
+{{#each user}}
+<tr>
+    <td >{{email}}</td>
+    <td >{{name}}</td>
+    <td>{{#if status}}Active{{else}}Inactive{{/if}}</td>
+    <td>{{#if admin}}Administrator{{else}}User{{/if}}</td>
+    <td><a href="/Delete/{{id}}" >DELETE</a></td>
+    <td><a href="/Edit{{id}}"  style="display: {{#if admin}}None{{else}}block{{/if}};">Modify</a></td>
+</tr>
+{{/each}}
+
+</table>
+</div>
+</div>

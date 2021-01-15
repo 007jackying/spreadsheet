@@ -1,0 +1,330 @@
+<template id="spreadSheetTemplate">
+    <style>
+        table {
+            border: black solid 2px;
+        }
+
+        th {
+            border: black solid 2px;
+        }
+
+        td {
+            border: black solid 2px;
+        }
+    </style>
+    <div>
+        <label for="sheetName">Spreadsheet Name: </label>
+        <input id="sheetName" type="text" name="sName" value="{{sheet.title}}" />
+        <div>
+            Author: {{sheet.email}}
+        </div>
+        <input type="hidden" value="{{sheet.id}}" id="sheetID" />
+        <input type="hidden" value="{{sheet.data}}" id="sheetRawTable" />
+        <input type="hidden" value="{{sheet.email}}" id="sheetAuthor" />
+        <input type="hidden" value="{{sheet.title}}" id="originalTitle" />
+    </div>
+
+    <div>
+        <button class="addROW">Add new row</button>
+        <button class="addCOL">Add new column</button>
+        <button class="saveButton"> SAVE</button>
+        <button class="deleteButton">Delete</button>
+        <button class="exportCSVButton">Export CSV</button>
+    </div>
+
+    <table class="template table" id="tabletemp">
+    </table>
+</template>
+
+
+
+<script>
+    class initSheet extends HTMLElement {
+        constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: 'open' });
+            const template = document.getElementById('spreadSheetTemplate');
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+            var table = shadow.querySelector('table.template');
+            var sheetName = shadow.querySelector('#sheetName');
+            var data = shadow.querySelector('#sheetRawTable').value;
+            let fixed = JSON.parse(data);
+            console.log("fixed: ", fixed);
+            console.log("fixed length: ", fixed.length);
+            let tbody1 = document.createElement('tbody');
+            tbody1.setAttribute('id', "tbody1");
+            this.rowNumber = fixed.length;
+            this.colNumber = 0;
+            var RowLayer = [];
+            var Row = [];
+            var Cell = [];
+
+            for (let i = 1; i <2; i++) {
+                RowLayer = fixed[0];
+                console.log("innerLayer: ",RowLayer);
+                for (let j = 0; j < RowLayer.length; j++) {
+                    Row = RowLayer[j];
+                    //console.log("row: ",Row);
+                }
+            }
+
+            this.colNumber = RowLayer.length+1;
+            //console.log('this.rowNumber: ', this.rowNumber);
+            console.log("this.colNumber", this.colNumber);
+
+            for (let r = 0; r < this.rowNumber; r++) {
+                //console.log("r: ",r);
+                let tableRow = document.createElement('tr');
+                tableRow.setAttribute('class', 'template row');
+                tableRow.setAttribute('id', `row${r}`);
+                if (r == 0) {
+                    for (let t_head = 0; t_head < this.colNumber; t_head++) {
+                        let tablehead = document.createElement('th');
+                        if (t_head == 0) {
+                            tablehead.setAttribute('class', "template th");
+                            tablehead.setAttribute('id', 'col0');
+                        } else {
+                            let ch = String.fromCharCode(t_head + 64);
+                            tablehead.setAttribute('class', `${ch}`);
+                            tablehead.setAttribute('id', `col${ch}`);
+                            let checkBox = document.createElement('input');
+                            checkBox.setAttribute('type', "checkbox");
+                            checkBox.setAttribute('class', 'checkbox');
+                            checkBox.setAttribute('value', 'column');
+                            tablehead.innerText = `${ch}`;
+                            tablehead.appendChild(checkBox);
+                        }
+                        tableRow.appendChild(tablehead);
+                    }
+                } else {
+                    //console.log('r>0');
+                    for (let t_data = 0; t_data < this.colNumber; t_data++) {
+                        //console.log(t_data);
+                        let tableData = document.createElement('td');
+                        //console.log(tableData);
+                        if (t_data == 0) {
+                            tableData.setAttribute('class', 'td');
+                            let checkBox = document.createElement('input');
+                            checkBox.setAttribute('type', 'checkbox');
+                            checkBox.setAttribute('class', 'checkbox');
+                            checkBox.setAttribute('value', 'row');
+                            tableData.innerText = `${r}`;
+                            tableData.appendChild(checkBox);
+                            //console.log("td : ",tableData);
+
+                        } else {
+                            let ch = String.fromCharCode(t_data + 64);
+                            tableData.setAttribute('class', `${ch}`);
+                            console.log("r", r);
+
+                            console.log('t_data', t_data);
+                            tableData.innerHTML = `<input id="${ch}${r}" class="cellInput" type="text" value="${fixed[r - 1][t_data - 1]}"/>`;
+
+                        }
+                        tableRow.appendChild(tableData);
+
+                    }
+
+                }
+                tbody1.appendChild(tableRow);
+            }
+            table.appendChild(tbody1);
+
+            //buttons
+            this._addRbutton = shadow.querySelector('.addROW');
+            this._addCbutton = shadow.querySelector('.addCOL');
+            this.saveButton = shadow.querySelector('.saveButton');
+            this.deleteButton = shadow.querySelector('.deleteButton');
+            this.exportCSVButton = shadow.querySelector('.exportCSVButton');
+            this.sheetName = shadow.getElementById('sheetName');
+            const requestParams = {
+                mode: 'cors',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            };
+
+            this._addRbutton.addEventListener('click', (evt) => {
+                let rowNum = this.rowNumber;
+                let row = document.createElement('tr');
+                row.setAttribute('class', 'template row');
+                row.setAttribute('id', `row${rowNum + 1}`);
+
+                for (let i = 0; i < this.colNumber; i++) {
+                    console.log("yes");
+                    let cell = document.createElement('td');
+                    if (i == 0) {
+                        let checkBox = document.createElement('input');
+                        checkBox.setAttribute('type', "checkbox");
+                        checkBox.setAttribute('class', "checkbox");
+                        checkBox.setAttribute('value', "row");
+                        cell.innerText = `${this.rowNumber}`;
+                        cell.appendChild(checkBox);
+                    } else {
+                        let inputBox = document.createElement('input');
+                        let ch = i + 64;
+                        let actualVal = String.fromCharCode(ch);
+                        cell.setAttribute('class', `${actualVal}`);
+                        inputBox.setAttribute('type', 'text');
+                        inputBox.setAttribute('id', `${actualVal}${this.rowNumber}`);
+                        inputBox.setAttribute('class', 'cellInput');
+                        cell.appendChild(inputBox);
+                    }
+
+
+                    row.appendChild(cell);
+                }
+                tbody1.appendChild(row);
+                table.appendChild(tbody1);
+                this.rowNumber++;
+
+            });
+
+            this._addCbutton.addEventListener('click', (evt) => {
+                this.colNumber++;
+                let colNum = this.colNumber;
+                let ch = colNum + 64;
+                let actualVal = String.fromCharCode(ch);
+                let tableHeadRow = shadow.getElementById("row0");
+                let newCol = document.createElement('th');
+                newCol.setAttribute('id', `col${actualVal}`);
+                newCol.innerHTML = `<input type="checkbox" class="checkbox" value="column">${actualVal}`;
+                console.log("newCol.innerHTML: ", newCol.innerHTML);
+                tableHeadRow.appendChild(newCol);
+
+                let lenOfRows = shadow.querySelectorAll("tr.template, tr.row").length;
+                for (let i = 1; i < lenOfRows; i++) {
+                    let currentRow = shadow.getElementById(`row${i}`);
+                    console.log(currentRow);
+                    let newCell = document.createElement('td');
+                    newCell.setAttribute("class", `${actualVal}`)
+                    newCell.innerHTML = `<input type="text" id="${actualVal}${i}" class="cellInput"/>`;
+                    currentRow.appendChild(newCell);
+                    tbody1.appendChild(currentRow);
+                }
+                table.appendChild(tbody1);
+
+            });
+
+            this.saveButton.addEventListener('click', async (evt) => {
+                const name = sheetName.value;
+                const email = shadow.querySelector('#sheetAuthor').value;
+                const excelID = shadow.querySelector('#sheetID').value;
+                const orgTitle = shadow.querySelector("#originalTitle").value;
+                let values=0;
+
+                console.log("name", name, email, excelID);
+                let data = [];
+                if (name.length === 0) {
+                    alert('Name is missing!');
+                    return;
+                }
+                //let table = this.wholetable;
+                console.log("tafve;e: ", table);
+                data = getTableCells(table);
+                if (name !== orgTitle) {
+                    let nameChanged = orgTitle;
+                    values = JSON.stringify({ author: email, value: data, excelID: excelID, originalName: nameChanged });
+                }else{
+                    values = JSON.stringify({ author: email, value: data, excelID: excelID});
+
+                }
+                
+                console.log("value before passe, ", values);
+                const params = { ...requestParams, method: 'PUT', body: values };
+                const resp = await fetch(`/sheet/${name}`, params);
+                const json = await resp.json();
+                console.log('save', json);
+                if (json.ok) {
+                    // refresh the names
+                    console.log('ok,created : ', name);
+                    //location.replace('spreadsheet');
+                } else {
+                    if (json.message != undefined) {
+                        console.log(json.message);
+                        alert(json.message);
+                    } else {
+                        console.log('not created');
+                        alert(json.message);
+                    }
+                }
+
+
+            });
+            let inputField = shadow.querySelectorAll('.cellInput');
+
+
+
+            function getTableCells(table) {
+                let data = [];
+                for (var i = 1, row; row = table.rows[i]; i++) {
+                    let rows = [];
+                    for (var j = 1, col; col = row.cells[j]; j++) {
+                        rows.push(table.rows[i].cells[j].firstChild.value);
+                    }
+                    data.push(rows);
+                }
+                return data;
+            }
+
+            this.deleteButton.addEventListener('click', async (evt) => {
+                let checkedClass = [];
+                let checkedBoxes = shadow.querySelectorAll('.checkbox');
+                for (let i = 0; i < checkedBoxes.length; i++) {
+                    if (checkedBoxes[i].checked) {
+                        if (checkedBoxes[i].getAttribute('value') == "row") {
+                            checkedBoxes[i].parentElement.parentElement.remove();
+
+                        } else if (checkedBoxes[i].getAttribute('value') == "column") {
+                            parent = checkedBoxes[i].parentElement.getAttribute('class');
+                            if (parent) {
+                                let sameSet = shadow.querySelectorAll(`.${parent}`);
+                                console.log("parent :", sameSet);
+                                for (let q = 0; q < sameSet.length; q++) {
+                                    sameSet[q].remove();
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            });
+
+
+            this.exportCSVButton.addEventListener('click', async (evt) => {
+                const sheetname = this.sheetName.value;
+                const data = getTableCells(table);
+                const values = JSON.stringify(data);
+                const params = { ...requestParams, method: 'PUT', body: values };
+                const resp = await fetch("/csv-export/", params);
+                // read the text
+                const text = await resp.text();
+                console.log(text);
+                let file = document.createElement('a');//to hold the link
+                file.href = 'data:text/csv;charset=utf-8,' + encodeURI(text);
+                file.target = '_blank'; // newtab
+                file.download = sheetname + ".csv";
+                file.click();
+
+            });
+
+
+
+
+        }
+
+
+
+    }
+
+    customElements.define('spread-sheet', initSheet);
+</script>
+
+
+
+
+<spread-sheet>
+</spread-sheet>

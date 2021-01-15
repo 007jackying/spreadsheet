@@ -1,0 +1,92 @@
+<input id="dataSet" type="hidden" value="{{data}}" />
+<input id="chartType" type="hidden" value="{{chartType}}"/>
+<input id="title" type="hidden" value="{{title}}"/>
+<div>
+    <label for="xaxis">X-Axis</label>
+    <select id="xaxis">
+        <option></option>
+    </select>
+</div>
+<div>
+    <label for="series">Series</label>
+    <select id="series">
+        <option></option>
+    </select>
+</div>
+<a href="#" id="generate">Generate</a>
+<canvas id="myChart"></canvas>
+
+
+
+<script>
+    let Header = [];
+    const chartType = document.getElementById('chartType').value;
+    const dataSet = JSON.parse(document.getElementById('dataSet').value);
+    const title = document.getElementById('title').value;
+    const firstLineHead = document.getElementById('firstLineHead');
+    const xaxis = document.getElementById('xaxis');
+    const series = document.getElementById('series');
+    const generate = document.getElementById('generate');
+    const color = ['red', 'blue', 'yellow', 'green','gray','voilet','purple'];
+    console.log("dataset", dataSet, dataSet.length);
+    for(let i = 0; i<dataSet[0].length; i++) {
+        Header.push(String.fromCharCode(65+parseInt(i)));
+    }
+
+    console.log("HEADER", Header);
+
+    loadSelects(xaxis, Header);
+    loadSelects(series, Header);
+
+
+    function loadSelects(selects, header) {
+        selects.innerHTML = "";
+        for(let i = 0; i< header.length; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.innerHTML = header[i];
+            selects.appendChild(option);
+        }   
+    }
+
+    generate.addEventListener('click', (e)=>{
+        let x = xaxis.value;
+        let y = series.value;
+        let labels = [];
+        let data = [];
+        let obj = {};
+        let row = [];
+        dataSet.forEach((ds)=>{
+            labels.push(ds[x]);
+            row.push(ds[y]);
+        });
+        obj.label = Header[y];
+        obj.data = row;
+        obj.backgroundColor = color[y];
+        data.push(obj);
+        console.log("values", labels, data);
+        drawChart(labels, data);
+    });
+
+    function drawChart(labels, data) {
+        new Chart(document.getElementById('myChart'), {
+            type: chartType,
+            data: {
+            labels: labels,
+            datasets: data
+            },
+            options: {
+                responsive: true,
+                legend: { 
+                    display: true,
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: title
+                }
+            }
+        });
+    }
+
+</script>

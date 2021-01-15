@@ -1,0 +1,11 @@
+<div class="register-wrapper">
+<div class="register-block">
+<h1>Login Page</h1>
+<form method="POST" action="/login">
+    <label>Email:</label> <input type="email" name=email value="{{sess.email}}"/>
+    <label>Password: </label><input type="password" name=password value="{{sess.password}}"/>
+    <input type="submit" value="Submit"/>
+</form>
+<a href="/Register">Click here to register</a>
+</div>
+</div>

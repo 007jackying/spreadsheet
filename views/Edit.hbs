@@ -1,0 +1,14 @@
+<div class="register-wrapper">
+    <div class="register-block">
+        <h3 class="register-title">Modify account</h3>
+        <form method="POST">
+            <h3>Email: {{sess.email}} </h3>
+             <input type="password" placeholder="Enter your password" name="password"/>
+             <input type="password"  placeholder="Confirm password" name="password2" />
+            <input type="text" placeholder="Enter your name" name="name" />
+            <input type="hidden" name="id" value="{{sess.id}}">
+            <input type="hidden" name="id2" value="{{id}}">
+            <input type="submit" style="color: black;" name="update" value="update">
+        </form>
+    </div>
+</div>

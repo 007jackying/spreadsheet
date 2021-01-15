@@ -1,0 +1,91 @@
+<div class="register-wrapper">
+    <div class="register-block">
+
+        <a href="/createSpreadSheet" class="addNew right"> + Add new spreadsheet</a>
+
+        <h1>Spreadsheet mock up</h1>
+        <hr>
+        <h2> List of Spreadsheet</h2>
+        <label> Name: <input id="import-file-name"> </label>
+        <input type="file" id="csv-file-chooser">
+
+        <table class="spreadsheet">
+            <tr>
+                <th>Name</th>
+                <th>Author</th>
+                <th>Sharable</th>
+                <th colspan="3">Action</th>
+            </tr>
+            {{#each sheet}}
+            <tr>
+                <td>{{title}}</td>
+                <td>{{email}}</td>
+                <td>{{sharable}}: <a href="/shareStatus?name={{id}}">Change</a></td>
+                <td><a href="/sheet_edit?name={{title}}">EDIT</a></td>
+                <td {{#if isOwner}}id="DNone"{{else}}id="show"{{/if}}><a href="/copy?name={{id}}&name2={{title}}">Copy</a></td>
+                <td {{#if isOwner}}id="show"{{else}}id="DNone"{{/if}}><a href="/delete?name={{id}}">Delete</a></td>
+                <td {{#if isOwner}}id="show"{{else}}id="DNone"{{/if}}><a href="/chart?name={{id}}&chartType=bar">Bar Chart</a></td>
+                <td {{#if isOwner}}id="show"{{else}}id="DNone"{{/if}}><a href="/chart?name={{id}}&chartType=pie">Pie Chart</a></td>
+                <td {{#if isOwner}}id="show"{{else}}id="DNone"{{/if}}><a href="/chart?name={{id}}&chartType=line">Line Graph</a></td>
+
+            </tr>
+            {{/each}}
+        </table>
+
+
+    </div>
+</div>
+<script>
+    async function importCSV(name, content) {
+        // the transmitted content is plain text from the text area
+        const requestParams = {
+                mode: 'cors',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            };
+        const params = {
+            ...requestParams, method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'text/plain',
+            },
+            body: content,
+        };
+        const resp = await fetch(`/csv-import/${name}`, params);
+        const json = await resp.json();
+        return json;
+    }
+
+    const fileImportName = document.querySelector('#import-file-name');
+    const upLoad = document.querySelector('#csv-file-chooser');
+    upLoad.addEventListener('change', async (evt) => {
+        const name = fileImportName.value;
+        if (name.trim().length === 0){
+            alert("Please enter the name for your imported spreadSheet before choosing file");
+            location.reload();
+            return;
+         } // ignore if no name
+        const { files } = upLoad;
+        // get the first File object from the file chooser
+        const first = files[0];
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/FileReader 
+        const reader = new FileReader();
+        console.log(reader);
+        // call back when file is read
+        reader.onload = async (evt) => {
+            console.log(reader.result);
+            // send the file to be imported
+            const json = await importCSV(name, reader.result);
+            if (json.ok) {
+                alert("new spreadsheet has been added!");
+            }
+        };
+        // start reading the local file
+        reader.readAsText(first);
+    });
+
+</script>

@@ -1,0 +1,118 @@
+<div class="register-wrapper">
+    <div class="register-block">
+        <h1>Share Status</h1>
+        <hr>
+        <input type="button" id="submitALL" onclick="SharingWithOthers()" value="submit" />
+        <table class="adminPage">
+            <input type="hidden" value="{{sheet.id}}" id="sheetID"/>
+            <input type="hidden" value="{{sheet.email}}" id="author"/>
+
+            <tr>
+                <th>Spreadsheet Name </th>
+                <th>Status</th>
+                <th>sharing with </th>
+
+            </tr>
+            <tr>
+                <td>{{sheet.title}}</td>
+                <td>
+
+                    <select id="sharable">
+                        <option value="True">Public</option>
+                        <option value="False">Private</option>
+                    </select>
+                </td>
+                <td id="userRegion">
+
+                </td>
+
+
+            </tr>
+
+        </table>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var sharable = document.getElementById('sharable').value;
+    var userRegion = document.getElementById('userRegion');
+    const name = document.getElementById('sheetID').value;
+    const author = document.getElementById('author').value;
+
+    console.log("sharable", sharable);
+    getUsers();
+    async function getUsers() {
+        // the transmitted content is plain text from the text area
+        const requestParams = {
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        };
+        const params = { ...requestParams, method: 'GET' };
+        const resp = await fetch(`/allUsers`, params);
+        const json = await resp.json();
+        if (json.ok) {
+            displayUsers(json.users);
+        }
+    }
+    async function SharingWithOthers() {
+        console.log('shared with others');
+        console.log("name ",name);
+        const requestParams = {
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+        };
+        let values = 0;
+        let checkedUsers = [];
+        let users = [];
+        if (sharable) {
+            users = document.getElementsByClassName('checkboxes');
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].checked) {
+                    console.log("user", i, users[i]);
+                    checkedUsers.push(users[i].value);
+                }
+            }
+            values = JSON.stringify({emails: checkedUsers, creator:author});
+            console.log("pushed values",values);
+
+        }
+
+        //console.log(users);
+        const params = { ...requestParams, method: 'PUT', body: values };
+        const resp = await fetch(`/satusChanged/${name}`, params);
+        const json = await resp.json();
+        console.log('save', json);
+        //const json = await resp.json();
+        if (json.ok) {
+            console.log(json.ok);
+        }
+    }
+
+
+    function displayUsers(json) {
+        for (let i = 0; i < json.length; i++) {
+            let checkbox = document.createElement('input');
+            checkbox.setAttribute('type', 'checkbox');
+            checkbox.setAttribute('id', `checkbox${i}`);
+            checkbox.setAttribute('name', `checkbox${i}`);
+            checkbox.setAttribute('class', 'checkboxes');
+            checkbox.value = json[i].email;
+
+            let label = document.createElement('label');
+            label.setAttribute('for', `checkbox${i}`);
+            label.innerHTML = json[i].email;
+            userRegion.appendChild(checkbox);
+            userRegion.appendChild(label);
+
+
+        }
+    }
+</script>

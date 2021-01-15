@@ -1,0 +1,296 @@
+<template id="spreadSheetTemplate">
+    <style>
+        table {
+            border: black solid 2px;
+        }
+
+        th {
+            border: black solid 2px;
+        }
+
+        td {
+            border: black solid 2px;
+        }
+    </style>
+    <div>
+        <label for="sheetName">Spreadsheet Name: </label>
+        <input id="sheetName" type="text" name="sName" />
+    </div>
+
+    <div>
+        <button class="addROW">Add new row</button>
+        <button class="addCOL">Add new column</button>
+        <button class="saveButton"> create</button>
+        <button class="deleteButton">Delete</button>
+        <button class="exportCSVButton">Export CSV</button>
+        <div>
+            <label for="sharable">sharable?: </label>
+            <select id="sharable">
+                <option value="True">Yes</option>
+                <option value="False">No</option>
+            </select>
+        </div>
+
+    </div>
+
+
+
+    <table class="template table" id="tabletemp">
+        <tbody id="tbody1">
+            <tr id="row0" class="template row">
+                <th class="template th" id="col0"></th>
+                <th class="A" id="colA"><input type="checkbox" class="checkbox" value="column"> A</th>
+                <th class="B" id="colB"><input type="checkbox" class="checkbox" value="column"> B</th>
+                <th class="C" id="colC"><input type="checkbox" class="checkbox" value="column"> C</th>
+                <th class="D" id="colD"><input type="checkbox" class="checkbox" value="column"> D</th>
+                <th class="E" id="colE"><input type="checkbox" class="checkbox" value="column"> E</th>
+                <th class="F" id="colF"><input type="checkbox" class="checkbox" value="column"> F</th>
+                <th class="G" id="colG"><input type="checkbox" class="checkbox" value="column"> G</th>
+                <th class="H" id="colH"><input type="checkbox" class="checkbox" value="column"> H</th>
+            </tr>
+            <tr id="row1" class="template row">
+                <td class="td"><input type="checkbox" class="checkbox" value="row"> 1</td>
+                <td class="A"><input id="A1" class="cellInput" type="text" /></td>
+                <td class="B"><input id="B1" class="cellInput" type="text" /></td>
+                <td class="C"><input id="C1" class="cellInput" type="text" /></td>
+                <td class="D"><input id="D1" class="cellInput" type="text" /></td>
+                <td class="E"><input id="E1" class="cellInput" type="text" /></td>
+                <td class="F"><input id="F1" class="cellInput" type="text" /></td>
+                <td class="G"><input id="G1" class="cellInput" type="text" /></td>
+                <td class="H"><input id="H1" class="cellInput" type="text" /></td>
+            </tr>
+            <tr id="row2" class="template row">
+                <td class="td"><input type="checkbox" class="checkbox" value="row"> 2</td>
+                <td class="A"><input id="A2" class="cellInput" type="text" /></td>
+                <td class="B"><input id="B2" class="cellInput" type="text" /></td>
+                <td class="C"><input id="C2" class="cellInput" type="text" /></td>
+                <td class="D"><input id="D2" class="cellInput" type="text" /></td>
+                <td class="E"><input id="E2" class="cellInput" type="text" /></td>
+                <td class="F"><input id="F2" class="cellInput" type="text" /></td>
+                <td class="G"><input id="G2" class="cellInput" type="text" /></td>
+                <td class="H"><input id="H2" class="cellInput" type="text" /></td>
+            </tr>
+            <tr id="row3" class="template row">
+                <td class="td"><input type="checkbox" class="checkbox" value="row"> 3</td>
+                <td class="A"><input id="A3" class="cellInput" type="text" /></td>
+                <td class="B"><input id="B3" class="cellInput" type="text" /></td>
+                <td class="C"><input id="C3" class="cellInput" type="text" /></td>
+                <td class="D"><input id="D3" class="cellInput" type="text" /></td>
+                <td class="E"><input id="E3" class="cellInput" type="text" /></td>
+                <td class="F"><input id="F3" class="cellInput" type="text" /></td>
+                <td class="G"><input id="G3" class="cellInput" type="text" /></td>
+                <td class="H"><input id="H3" class="cellInput" type="text" /></td>
+            </tr>
+            <tr id="row4" class="template row">
+                <td class="td"><input type="checkbox" class="checkbox" value="row"> 4</td>
+                <td class="A"><input id="A4" class="cellInput" type="text" /></td>
+                <td class="B"><input id="B4" class="cellInput" type="text" /></td>
+                <td class="C"><input id="C4" class="cellInput" type="text" /></td>
+                <td class="D"><input id="D4" class="cellInput" type="text" /></td>
+                <td class="E"><input id="E4" class="cellInput" type="text" /></td>
+                <td class="F"><input id="F4" class="cellInput" type="text" /></td>
+                <td class="G"><input id="G4" class="cellInput" type="text" /></td>
+                <td class="H"><input id="H4" class="cellInput" type="text" /></td>
+            </tr>
+            <tr id="row5" class="template row">
+                <td class="td"><input type="checkbox" class="checkbox" value="row"> 5</td>
+                <td class="A"><input id="A5" class="cellInput" type="text" /></td>
+                <td class="B"><input id="B5" class="cellInput" type="text" /></td>
+                <td class="C"><input id="C5" class="cellInput" type="text" /></td>
+                <td class="D"><input id="D5" class="cellInput" type="text" /></td>
+                <td class="E"><input id="E5" class="cellInput" type="text" /></td>
+                <td class="F"><input id="F5" class="cellInput" type="text" /></td>
+                <td class="G"><input id="G5" class="cellInput" type="text" /></td>
+                <td class="H"><input id="H5" class="cellInput" type="text" /></td>
+            </tr>
+        </tbody>
+    </table>
+</template>
+
+<script>
+    class initSheet extends HTMLElement {
+        constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: 'open' });
+            const template = document.getElementById('spreadSheetTemplate');
+            this.shadowRoot.appendChild(template.content.cloneNode(true));
+            this._table = shadow.getElementById('tbody1');
+            this.wholetable = shadow.getElementById("tabletemp");
+            this._row = shadow.querySelectorAll("tr");
+            this._col = shadow.querySelectorAll("th");
+            this.cells = shadow.querySelectorAll(".cellInput");
+            this.rowNumber = 5;
+            this.colNumber = 72;
+
+            console.log(this._row.length);
+            console.log(this.cells.length);
+            this.shareStatus = shadow.querySelector('#sharable');
+            this._addRbutton = shadow.querySelector('.addROW');
+            this._addCbutton = shadow.querySelector('.addCOL');
+            this.saveButton = shadow.querySelector('.saveButton');
+            this.deleteButton = shadow.querySelector('.deleteButton');
+            this.exportCSVButton = shadow.querySelector('.exportCSVButton');
+            this.sheetName = shadow.getElementById('sheetName');
+            //this.upLoad = shadow.querySelector('#csv-file-chooser');
+
+            const requestParams = {
+                mode: 'cors',
+                credentials: 'same-origin',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            };
+            this._addRbutton.addEventListener('click', (evt) => {
+                let rowNum = this.rowNumber;
+                let row = document.createElement('tr');
+                row.setAttribute('id', `row${rowNum + 1}`);
+                row.setAttribute('class', 'template row');
+                this.rowNumber++;
+                row.innerHTML = `<input type="checkbox"/>${this.rowNumber}`;
+                for (let i = 0; i < this.colNumber - 64; i++) {
+                    let cell = document.createElement('td');
+                    let inputBox = document.createElement('input');
+                    let ch = i + 65;
+                    let actualVal = String.fromCharCode(ch);
+                    cell.setAttribute('class', `${actualVal}`);
+                    inputBox.setAttribute('type', 'text');
+                    inputBox.setAttribute('id', `${actualVal}${this.rowNumber}`);
+                    inputBox.setAttribute('class', 'cellInput');
+                    cell.appendChild(inputBox);
+                    row.appendChild(cell);
+                }
+                this._table.appendChild(row);
+
+            });
+
+            this._addCbutton.addEventListener('click', (evt) => {
+                this.colNumber++;
+                let colNum = this.colNumber;
+                let ch = colNum;
+                let actualVal = String.fromCharCode(ch);
+                let tableHeadRow = shadow.getElementById("row0");
+                let newCol = document.createElement('th');
+                newCol.setAttribute('id', `col${actualVal}`);
+                newCol.innerHTML = `${actualVal}`;
+                console.log("newCol.innerHTML: ", newCol.innerHTML);
+                tableHeadRow.appendChild(newCol);
+
+                let lenOfRows = shadow.querySelectorAll("tr.template, tr.row").length;
+                for (let i = 1; i < lenOfRows; i++) {
+                    let currentRow = shadow.getElementById(`row${i}`);
+                    console.log(currentRow);
+                    let newCell = document.createElement('td');
+                    newCell.setAttribute("class", `${actualVal}`)
+                    newCell.innerHTML = `<input type="text" id="${actualVal}${i}" class="cellInput"/>`;
+                    currentRow.appendChild(newCell);
+                }
+
+
+            });
+
+            this.saveButton.addEventListener('click', async (evt) => {
+                const name = this.sheetName.value;
+                let data = [];
+                if (name.length === 0) {
+                    alert('Name is missing!');
+                    return;
+                }
+                let table = this.wholetable;
+                console.log("tafve;e: ", table);
+                data = getTableCells(table);
+                const values = JSON.stringify({tableInputs:data, sharable:this.shareStatus.value});
+                console.log("value before passe, ", values);
+                const params = { ...requestParams, method: 'PUT', body: values };
+                const resp = await fetch(`/createSheet/${name}`, params);
+                const json = await resp.json();
+                console.log('create', json);
+                if (json.ok) {
+                    // refresh the names
+                    console.log('ok,created : ', name);
+                    location.replace('spreadsheet');
+                } else {
+                    if (json.message != undefined) {
+                        console.log(json.message);
+                        alert(json.message);
+                    } else {
+                        console.log('not created');
+                        alert(json.message);
+                    }
+                }
+
+
+            });
+
+            function getTableCells(table) {
+                let data = [];
+                for (var i = 1, row; row = table.rows[i]; i++) {
+                    let rows = [];
+                    for (var j = 1, col; col = row.cells[j]; j++) {
+                        rows.push(table.rows[i].cells[j].firstChild.value);
+                    }
+                    data.push(rows);
+                }
+                return data;
+            }
+
+            this.deleteButton.addEventListener('click', async (evt) => {
+                let checkedClass = [];
+                let checkedBoxes = shadow.querySelectorAll('.checkbox');
+                for (let i = 0; i < checkedBoxes.length; i++) {
+                    if (checkedBoxes[i].checked) {
+                        if (checkedBoxes[i].getAttribute('value') == "row") {
+                            checkedBoxes[i].parentElement.parentElement.remove();
+
+                        } else if (checkedBoxes[i].getAttribute('value') == "column") {
+                            parent = checkedBoxes[i].parentElement.getAttribute('class');
+                            if (parent) {
+                                let sameSet = shadow.querySelectorAll(`.${parent}`);
+                                console.log("parent :", sameSet);
+                                for (let q = 0; q < sameSet.length; q++) {
+                                    sameSet[q].remove();
+                                }
+                            }
+
+                        }
+
+                    }
+                }
+            });
+
+
+            this.exportCSVButton.addEventListener('click', async (evt) => {
+                const sheetname = this.sheetName.value;
+                const name = this.wholetable;
+                const data = getTableCells(name);
+                const values = JSON.stringify(data);
+                const params = { ...requestParams, method: 'PUT', body: values };
+                const resp = await fetch("/csv-export/", params);
+                // read the text
+                const text = await resp.text();
+                console.log(text);
+                let file = document.createElement('a');//to hold the link
+                file.href = 'data:text/csv;charset=utf-8,' + encodeURI(text);
+                file.target = '_blank'; // newtab
+                file.download = sheetname + ".csv";
+                file.click();
+
+            });
+
+
+
+
+        }
+
+
+
+    }
+
+    customElements.define('spread-sheet', initSheet);
+</script>
+
+
+
+
+<spread-sheet>
+</spread-sheet>
